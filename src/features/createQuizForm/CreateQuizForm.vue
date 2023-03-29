@@ -5,12 +5,15 @@ import { ErrorMessage, Field, FieldArray, useForm } from 'vee-validate'
 import { nextTick, ref } from 'vue'
 import { useFirestore } from 'vuefire'
 import { QuizFormSchema } from '@/schemas/quizFormSchema'
+import { useRouter } from 'vue-router'
 
-const { handleSubmit, errors, values } = useForm({
+const { handleSubmit } = useForm({
   validationSchema: QuizFormSchema
 })
 
 const db = useFirestore()
+
+const router = useRouter()
 
 const onSubmit = handleSubmit(async (values) => {
   const castedValues = QuizFormSchema.cast(values)
@@ -18,6 +21,7 @@ const onSubmit = handleSubmit(async (values) => {
 
   try {
     await setDoc(doc(db, 'quizes', id), { ...castedValues, id: nanoid() })
+    router.push(`/quiz/${id}`)
   } catch (error) {
     console.log(error)
   }
@@ -38,15 +42,7 @@ function hideErrors() {
 </script>
 
 <template>
-  <form class="flex flex-col gap-4 px-4" @submit="onSubmit">
-    <pre>
-
-      {{ errors }}
-    </pre>
-    <pre>
-
-      {{ values }}
-    </pre>
+  <form class="flex flex-col gap-4 px-4 pb-4" @submit="onSubmit">
     <div v-if="isShowErrors">
       <p>Исправьте ошибки, чтобы опубликовать свой тест</p>
       <button type="button" @click="hideErrors">Скрыть</button>
