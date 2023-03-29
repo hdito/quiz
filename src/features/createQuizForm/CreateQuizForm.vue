@@ -1,49 +1,26 @@
 <script setup lang="ts">
+import { doc, setDoc } from 'firebase/firestore'
+import { nanoid } from 'nanoid'
 import { ErrorMessage, Field, FieldArray, useForm } from 'vee-validate'
 import { nextTick, ref } from 'vue'
-import { array, number, object, string } from 'yup'
+import { useFirestore } from 'vuefire'
+import { QuizFormSchema } from '@/schemas/quizFormSchema'
 
-const titleValidationSchema = string().required("Can't be empty")
-const resultsValidationSchema = array(
-  object({
-    min: number().required("Can't be empty"),
-    max: number().required("Can't be empty"),
-    text: string().required("Can't be empty")
-  })
-).test({
-  message: 'Quiz must have at least 1 result',
-  test: (array) => array && array.length !== 0
-})
-const questionsValidationSchema = array(
-  object({
-    text: string().required("Can't be empty"),
-    answers: array(
-      object({
-        score: number().required("Can't be empty"),
-        text: string().required("Can't be empty")
-      })
-    ).test({
-      message: 'Question must have at least 1 answer',
-      test: (array) => array && array.length !== 0
-    })
-  })
-).test({
-  message: 'Quiz must have at least 1 question',
-  test: (array) => array && array.length !== 0
+const { handleSubmit, errors, values } = useForm({
+  validationSchema: QuizFormSchema
 })
 
-const validationSchema = object({
-  title: titleValidationSchema,
-  results: resultsValidationSchema,
-  questions: questionsValidationSchema
-})
+const db = useFirestore()
 
-const { handleSubmit } = useForm({
-  validationSchema
-})
+const onSubmit = handleSubmit(async (values) => {
+  const castedValues = QuizFormSchema.cast(values)
+  const id = nanoid()
 
-const onSubmit = handleSubmit((values) => {
-  console.log(values)
+  try {
+    await setDoc(doc(db, 'quizes', id), { ...castedValues, id: nanoid() })
+  } catch (error) {
+    console.log(error)
+  }
 }, onInvalidSubmit)
 
 function onInvalidSubmit() {
@@ -62,6 +39,14 @@ function hideErrors() {
 
 <template>
   <form class="flex flex-col gap-4 px-4" @submit="onSubmit">
+    <pre>
+
+      {{ errors }}
+    </pre>
+    <pre>
+
+      {{ values }}
+    </pre>
     <div v-if="isShowErrors">
       <p>Исправьте ошибки, чтобы опубликовать свой тест</p>
       <button type="button" @click="hideErrors">Скрыть</button>
@@ -74,6 +59,13 @@ function hideErrors() {
         <label for="quiz-title">Название</label>
         <Field name="title" id="quiz-title" type="text" />
         <ErrorMessage name="title" />
+      </div>
+      <div class="flex flex-col">
+        <label for="quiz-description">Описание</label>
+        <Field name="description" id="quiz-description" type="text" v-slot="{ field }">
+          <textarea v-bind="field" />
+        </Field>
+        <ErrorMessage name="description" />
       </div>
     </div>
 
@@ -138,24 +130,19 @@ function hideErrors() {
                   </div>
                 </div>
               </div>
-              <button type="button" @click="() => addAnswer({ score: undefined, text: undefined })">
-                Добавить ответ
-              </button>
+              <button type="button" @click="() => addAnswer({})">Добавить ответ</button>
             </FieldArray>
             <button class="block" type="button" @click="() => removeQuestion(questionIndex)">
               Удалить вопрос
             </button>
           </div>
         </div>
-        <button type="button" @click="() => addQuestion({ text: undefined, answers: [] })">
-          Добавить вопрос
-        </button>
+        <button type="button" @click="() => addQuestion({})">Добавить вопрос</button>
       </FieldArray>
     </div>
 
     <div class="bg-gray-300 p-4">
       <h2 class="font-bold">Результаты</h2>
-
       <FieldArray
         name="results"
         v-slot="{ fields: resultFields, push: addResult, remove: removeResult }"
@@ -200,12 +187,7 @@ function hideErrors() {
             </div>
           </div>
         </div>
-        <button
-          type="button"
-          @click="() => addResult({ text: undefined, min: undefined, max: undefined })"
-        >
-          Добавить результат
-        </button>
+        <button type="button" @click="() => addResult({})">Добавить результат</button>
       </FieldArray>
     </div>
     <button type="submit">Опубликовать</button>
