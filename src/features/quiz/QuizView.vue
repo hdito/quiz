@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { toRefs } from 'vue'
 import QuizForm from './QuizForm.vue'
 import { useQuiz } from './useQuiz'
 
-const { data, pending } = useQuiz()
+const props = defineProps<{ id: string }>()
+const { id } = toRefs(props)
+
+const { data, pending } = useQuiz(id)
 </script>
 
 <template>

@@ -8,6 +8,6 @@ export const router = createRouter({
   routes: [
     { path: '/', component: QuizListView },
     { path: '/create', component: CreateQuizFormView },
-    { path: '/quiz/:id', component: QuizView }
+    { path: '/quiz/:id', component: QuizView, props: true }
   ]
 })

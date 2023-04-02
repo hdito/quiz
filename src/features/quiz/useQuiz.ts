@@ -1,17 +1,12 @@
 import { QuizSchema } from '@/schemas/quizSchema'
 import { doc } from 'firebase/firestore'
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useFirestore, useDocument, firestoreDefaultConverter } from 'vuefire'
+import { computed, type Ref } from 'vue'
+import { firestoreDefaultConverter, useDocument, useFirestore } from 'vuefire'
 
-export function useQuiz() {
+export function useQuiz(id: Ref<string>) {
   const db = useFirestore()
-  const route = useRoute()
 
-  const id = route.params?.id
-  if (typeof id !== 'string') throw Error('Component must be used only inside :id route')
-
-  const quizDocument = computed(() => doc(db, 'quizes', id))
+  const quizDocument = computed(() => doc(db, 'quizes', id.value))
 
   const quiz = useDocument(
     quizDocument.value.withConverter({
