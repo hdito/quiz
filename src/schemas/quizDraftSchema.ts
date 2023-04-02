@@ -1,24 +1,24 @@
 import { array, number, object, string, type InferType, boolean } from 'yup'
 
-export const QuizSchema = object({
-  title: string().required(),
-  description: string().required(),
+export const QuizDraftSchema = object({
+  title: string(),
+  description: string(),
   questions: array(
     object({
-      text: string().required(),
+      text: string(),
       answers: array(
         object({
-          text: string().required(),
-          score: number().required()
+          text: string(),
+          score: number()
         })
       ).required()
     })
   ).required(),
   results: array(
     object({
-      text: string().required(),
-      min: number().required(),
-      max: number().required()
+      text: string(),
+      min: number(),
+      max: number()
     })
   ).required(),
   id: string().required(),
@@ -26,4 +26,4 @@ export const QuizSchema = object({
   owner: string().required()
 })
 
-export type Quiz = InferType<typeof QuizSchema>
+export type QuizDraft = InferType<typeof QuizDraftSchema>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { collection } from 'firebase/firestore'
+import { collection, query, where } from 'firebase/firestore'
 import { firestoreDefaultConverter, useCollection, useFirestore } from 'vuefire'
 import { QuizSchema } from '@/schemas/quizSchema'
 
 const db = useFirestore()
 
+const quizQuery = query(collection(db, 'quizes'), where('isPublished', '==', true))
+
 const quizes = useCollection(
-  collection(db, 'quizes').withConverter({
+  quizQuery.withConverter({
     fromFirestore: (snapshot) => {
       const data = firestoreDefaultConverter.fromFirestore(snapshot)
       const parsedQuizes = QuizSchema.validateSync(data)
