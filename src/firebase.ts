@@ -1,6 +1,12 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
-import { getAuth, connectAuthEmulator } from 'firebase/auth'
+import {
+  getAuth,
+  connectAuthEmulator,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut as firebaseSignOut
+} from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
@@ -19,4 +25,14 @@ const auth = getAuth(firebaseApp)
 if (location.hostname === 'localhost') {
   connectAuthEmulator(auth, 'http://localhost:9099')
   connectFirestoreEmulator(db, 'localhost', 8080)
+}
+
+const provider = new GoogleAuthProvider()
+
+export async function signIn() {
+  await signInWithPopup(auth, provider)
+}
+
+export async function signOut() {
+  await firebaseSignOut(auth)
 }
