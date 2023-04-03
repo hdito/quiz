@@ -1,12 +1,12 @@
 import { initializeApp } from 'firebase/app'
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import {
-  getAuth,
-  connectAuthEmulator,
   GoogleAuthProvider,
-  signInWithPopup,
-  signOut as firebaseSignOut
+  connectAuthEmulator,
+  signOut as firebaseSignOut,
+  getAuth,
+  signInWithPopup
 } from 'firebase/auth'
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,

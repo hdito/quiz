@@ -1,15 +1,15 @@
 import { array, number, object, string } from 'yup'
 
 export const QuizFormSchema = object({
-  title: string().required('Не может быть пустым'),
-  description: string().required('Не может быть пустым'),
+  title: string().required('Название не может быть пустым'),
+  description: string().required('Описание не может быть пустым'),
   questions: array(
     object({
-      text: string().required('Не может быть пустым'),
+      text: string().required('Вопрос не может быть пустым'),
       answers: array(
         object({
-          text: string().required('Не может быть пустым'),
-          score: number().required('Не может быть пустым')
+          text: string().required('Ответ не может быть пустым'),
+          score: number().required('Балл ответа не может быть пустым')
         })
       ).test({
         message: 'Вопрос должен иметь хотя бы 1 ответ',
@@ -22,9 +22,9 @@ export const QuizFormSchema = object({
   }),
   results: array(
     object({
-      text: string().required('Не может быть пустым'),
-      min: number().required('Не может быть пустым'),
-      max: number().required('Не может быть пустым')
+      text: string().required('Результат не может быть пустым'),
+      min: number().required('Минимальный балл не может быть пустым'),
+      max: number().required('Максимальный балл не может быть пустым')
     })
   ).test({
     message: 'Тест должен иметь хотя бы 1 результат',
