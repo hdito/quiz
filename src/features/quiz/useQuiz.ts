@@ -1,6 +1,6 @@
 import { QuizSchema } from '@/schemas/quizSchema'
 import { doc } from 'firebase/firestore'
-import { computed, type Ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 import { firestoreDefaultConverter, useDocument, useFirestore } from 'vuefire'
 
 export function useQuiz(id: Ref<string>) {
@@ -8,7 +8,8 @@ export function useQuiz(id: Ref<string>) {
 
   const quizDocument = computed(() => doc(db, 'quizes', id.value))
 
-  const quiz = useDocument(
+  const loading = ref(true)
+  const { data, error, promise } = useDocument(
     quizDocument.value.withConverter({
       fromFirestore: (snapshot) => {
         const data = firestoreDefaultConverter.fromFirestore(snapshot)
@@ -18,5 +19,6 @@ export function useQuiz(id: Ref<string>) {
       toFirestore: (data) => data
     })
   )
-  return quiz
+  promise.value.then(() => (loading.value = false))
+  return { data, error, loading }
 }

@@ -6,10 +6,10 @@ import { useQuiz } from './useQuiz'
 const props = defineProps<{ id: string }>()
 const { id } = toRefs(props)
 
-const { data, pending } = useQuiz(id)
+const { data, loading } = useQuiz(id)
 </script>
 
 <template>
-  <div v-if="pending" class="px-4">Загрузка...</div>
+  <div v-if="loading" class="px-4">Загрузка...</div>
   <QuizForm v-else :quiz="data!" />
 </template>
