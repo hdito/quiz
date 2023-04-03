@@ -1,27 +1,18 @@
 <script setup lang="ts">
-import { collection, query, where } from 'firebase/firestore'
-import { firestoreDefaultConverter, useCollection, useFirestore } from 'vuefire'
-import { QuizSchema } from '@/schemas/quizSchema'
+import { useQuizList } from './useQuizList'
 
-const db = useFirestore()
-
-const quizQuery = query(collection(db, 'quizes'), where('isPublished', '==', true))
-
-const quizes = useCollection(
-  quizQuery.withConverter({
-    fromFirestore: (snapshot) => {
-      const data = firestoreDefaultConverter.fromFirestore(snapshot)
-      const parsedQuizes = QuizSchema.validateSync(data)
-      return parsedQuizes
-    },
-    toFirestore: (data) => data
-  })
-)
+const { data: quizes, loading, error } = useQuizList()
 </script>
 
 <template>
   <main class="flex flex-col gap-4 px-4">
+    <div v-if="loading">Загрузка...</div>
+    <div v-else-if="error">
+      <h2 class="font-bold">При загрузке данных возникла ошибка</h2>
+      <p>Попробуйте зайти позднее</p>
+    </div>
     <RouterLink
+      v-else
       v-for="quiz in quizes"
       :key="quiz.title"
       class="border border-black p-4 hover:underline"
