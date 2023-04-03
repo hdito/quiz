@@ -9,8 +9,12 @@ import PublishErrorsModal from './PublishErrorsModal.vue'
 import { useDrafts } from './useDrafts'
 import { usePublishedQuizes } from './usePublishedQuizes'
 
-const { data: drafts, loading: loadingDrafts } = useDrafts()
-const { data: publishedQuizes, loading: loadingPublishedQuizes } = usePublishedQuizes()
+const { data: drafts, loading: loadingDrafts, error: errorDrafts } = useDrafts()
+const {
+  data: publishedQuizes,
+  loading: loadingPublishedQuizes,
+  error: errorPublishedQuizes
+} = usePublishedQuizes()
 
 async function deleteQuiz(id: string) {
   try {
@@ -54,6 +58,10 @@ const errors = ref<ValidationError | null>(null)
       />
     </Teleport>
     <p v-if="loadingDrafts || loadingPublishedQuizes">Загрузка...</p>
+    <div v-else-if="errorDrafts || errorPublishedQuizes">
+      <h2 class="font-bold">При загрузке данных возникла ошибка</h2>
+      <p>Попробуйте зайти позднее</p>
+    </div>
     <template v-else>
       <h2 class="font-bold">Черновики</h2>
       <div class="mb-4 flex flex-col gap-2" v-if="drafts.length !== 0">
