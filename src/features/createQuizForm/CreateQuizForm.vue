@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import { useErrorStore } from '@/features/clientErrors/errorStore'
 import { db } from '@/firebase'
 import { router } from '@/router'
-import type { QuizDraft } from '@/schemas/quizDraftSchema'
+import { QuizDraftSchema, type QuizDraft } from '@/schemas/quizDraftSchema'
 import { QuizFormSchema } from '@/schemas/quizFormSchema'
-import { setDoc, doc, updateDoc } from 'firebase/firestore'
-import { nanoid } from 'nanoid'
-import { useForm, Field, ErrorMessage, FieldArray } from 'vee-validate'
-import { nextTick, ref } from 'vue'
 import { debounce } from 'debounce'
+import { doc, updateDoc } from 'firebase/firestore'
+import { ErrorMessage, Field, FieldArray, useForm } from 'vee-validate'
+import { nextTick, onUnmounted, ref } from 'vue'
 
 const props = defineProps<{ quiz: QuizDraft }>()
+
+const { addError } = useErrorStore()
 
 const { handleSubmit, values } = useForm({
   validationSchema: QuizFormSchema,
@@ -18,13 +20,12 @@ const { handleSubmit, values } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
   const castedValues = QuizFormSchema.cast(values)
-  const id = nanoid()
 
   try {
-    await setDoc(doc(db, 'quizes', id), { ...castedValues, id: nanoid(), isPublished: true })
-    router.push(`/quiz/${id}`)
+    await updateDoc(doc(db, 'quizes', props.quiz.id), { ...castedValues, isPublished: true })
+    router.push(`/quiz/${props.quiz.id}`)
   } catch (error) {
-    console.log(error)
+    addError('Не удалось опубликовать')
   }
 }, onInvalidSubmit)
 
@@ -42,12 +43,25 @@ function hideErrors() {
 }
 
 const debouncedUpdate = debounce(async () => {
+  let updatedQuiz = null
+
   try {
-    await updateDoc(doc(db, 'quizes', props.quiz.id), QuizFormSchema.cast(values))
+    updatedQuiz = QuizFormSchema.cast(values)
+  } catch {
+    updatedQuiz = { ...QuizDraftSchema.cast(values), isPublished: false }
+  }
+
+  try {
+    await updateDoc(doc(db, 'quizes', props.quiz.id), updatedQuiz)
   } catch (e) {
-    console.error(e)
+    console.log(e)
+    addError('Не удалось сохранить тест')
   }
 }, 5000)
+
+onUnmounted(() => {
+  debouncedUpdate.clear()
+})
 </script>
 
 <template>

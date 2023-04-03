@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { useErrorStore } from '@/features/clientErrors/errorStore'
 import { db } from '@/firebase'
 import type { QuizDraft } from '@/schemas/quizDraftSchema'
 import { QuizFormSchema } from '@/schemas/quizFormSchema'
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { ref } from 'vue'
-import { ValidationError } from 'yup'
 import PublishErrorsModal from './PublishErrorsModal.vue'
 import { useDrafts } from './useDrafts'
 import { usePublishedQuizes } from './usePublishedQuizes'
@@ -16,11 +16,13 @@ const {
   error: errorPublishedQuizes
 } = usePublishedQuizes()
 
+const { addError } = useErrorStore()
+
 async function deleteQuiz(id: string) {
   try {
     await deleteDoc(doc(db, 'quizes', id))
   } catch (e) {
-    console.error(e)
+    addError('Не удалось удалить')
   }
 }
 
@@ -28,7 +30,7 @@ async function removeFromPublication(id: string) {
   try {
     await updateDoc(doc(db, 'quizes', id), { isPublished: false })
   } catch (e) {
-    console.error(e)
+    addError('Не удалось снять с публикации')
   }
 }
 
@@ -36,26 +38,22 @@ async function publish(quiz: QuizDraft) {
   try {
     await QuizFormSchema.validate(quiz, { abortEarly: false })
   } catch (e) {
-    if (e instanceof ValidationError) errors.value = e
+    hasErrors.value = true
     return
   }
   try {
     await updateDoc(doc(db, 'quizes', quiz.id), { isPublished: true })
   } catch (e) {
-    console.error(e)
+    addError('Не удалось опубликовать')
   }
 }
-const errors = ref<ValidationError | null>(null)
+const hasErrors = ref(false)
 </script>
 
 <template>
   <main class="px-4 pb-4">
     <Teleport to="body">
-      <PublishErrorsModal
-        v-if="errors !== null"
-        :errors="errors"
-        :onClose="() => (errors = null)"
-      />
+      <PublishErrorsModal v-if="hasErrors" :onClose="() => (hasErrors = false)" />
     </Teleport>
     <p v-if="loadingDrafts || loadingPublishedQuizes">Загрузка...</p>
     <div v-else-if="errorDrafts || errorPublishedQuizes">

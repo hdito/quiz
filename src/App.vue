@@ -2,6 +2,8 @@
 import { useCurrentUser, useIsCurrentUserLoaded } from 'vuefire'
 import { signIn, signOut } from './firebase'
 import { useRouter } from 'vue-router'
+import ClientErrors from '@/features/clientErrors/ClientErrors.vue'
+import { useErrorStore } from './features/clientErrors/errorStore'
 
 const isCurrentUserLoaded = useIsCurrentUserLoaded()
 
@@ -9,8 +11,14 @@ const user = useCurrentUser()
 
 const router = useRouter()
 
-function signOutWithRedirect() {
-  signOut()
+const { addError } = useErrorStore()
+
+async function signOutWithRedirect() {
+  try {
+    await signOut()
+  } catch (e) {
+    addError('Не удалось выйти')
+  }
   router.push('/')
 }
 </script>
@@ -30,5 +38,6 @@ function signOutWithRedirect() {
     </header>
 
     <RouterView />
+    <ClientErrors />
   </template>
 </template>

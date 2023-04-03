@@ -10,6 +10,8 @@ export const QuizDraftSchema = object({
         object({
           text: string(),
           score: number()
+            .nullable()
+            .transform((value) => (value === Number(value) ? value : null))
         })
       ).required()
     })
@@ -17,8 +19,12 @@ export const QuizDraftSchema = object({
   results: array(
     object({
       text: string(),
-      min: number(),
+      min: number()
+        .nullable()
+        .transform((value) => (value === Number(value) ? value : null)),
       max: number()
+        .nullable()
+        .transform((value) => (value === Number(value) ? value : null))
     })
   ).required(),
   id: string().required(),

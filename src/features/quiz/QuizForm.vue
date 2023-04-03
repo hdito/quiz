@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Quiz } from '@/schemas/quizSchema'
 import { computed, ref, toRefs } from 'vue'
+import { useErrorStore } from '../clientErrors/errorStore'
 
 const props = defineProps<{ quiz: Quiz }>()
 
@@ -14,15 +15,21 @@ const currentQuestion = computed(() => {
   return quiz.value.questions[position.value]
 })
 
+const { addError } = useErrorStore()
+
 function showUserResult() {
-  if (userAnswers.value.some((answer) => answer === null))
-    throw Error('Must be called only after user answered all questions')
+  if (userAnswers.value.some((answer) => answer === null)) {
+    return
+  }
   const totalScore = (userAnswers.value as number[]).reduce((total, answer) => (total += answer), 0)
 
   const userResult = quiz.value.results.find(
     (result) => result.min <= totalScore && result.max >= totalScore
   )
-  if (!userResult) throw Error('Incorrect quiz data')
+  if (!userResult) {
+    addError('Некорретные условия теста')
+    return
+  }
   return userResult.text
 }
 

@@ -9,7 +9,9 @@ export const QuizFormSchema = object({
       answers: array(
         object({
           text: string().required('Ответ не может быть пустым'),
-          score: number().required('Балл ответа не может быть пустым')
+          score: number()
+            .typeError('Балл ответа не может быть пустым')
+            .required('Балл ответа не может быть пустым')
         })
       ).test({
         message: 'Вопрос должен иметь хотя бы 1 ответ',
@@ -23,8 +25,12 @@ export const QuizFormSchema = object({
   results: array(
     object({
       text: string().required('Результат не может быть пустым'),
-      min: number().required('Минимальный балл не может быть пустым'),
-      max: number().required('Максимальный балл не может быть пустым')
+      min: number()
+        .typeError('Минимальный балл не может быть пустым')
+        .required('Минимальный балл не может быть пустым'),
+      max: number()
+        .typeError('Максимальный балл не может быть пустым')
+        .required('Максимальный балл не может быть пустым')
     })
   ).test({
     message: 'Тест должен иметь хотя бы 1 результат',
