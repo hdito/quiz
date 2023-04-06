@@ -6,12 +6,11 @@ import { ref, computed, onMounted, type Ref } from 'vue'
 export function useQuiz(id: Ref<string>) {
   const quiz = ref<QuizDraft | null>(null)
   const error = ref<unknown | null>(null)
-  const loading = ref(false)
+  const loading = ref(true)
 
   const quizDoc = computed(() => doc(db, 'quizes', id.value))
 
   onMounted(async () => {
-    loading.value = true
     try {
       const data = await getDoc(quizDoc.value)
       quiz.value = QuizDraftSchema.validateSync(data.data())

@@ -25,19 +25,31 @@ async function signOutWithRedirect() {
 
 <template>
   <template v-if="isCurrentUserLoaded">
-    <header class="sticky top-0 flex items-center gap-4 bg-white/50 p-4">
-      <RouterLink class="underline" to="/">Тесты</RouterLink>
+    <header class="sticky top-0 flex items-center gap-6 bg-white/50 p-4 shadow-md shadow-slate-200">
+      <RouterLink active-class="underline underline-offset-2 decoration-2" to="/">Тесты</RouterLink>
 
       <template v-if="user && user.uid">
-        <RouterLink class="underline" to="/user">Мои тесты</RouterLink>
-        <RouterLink class="underline" to="/create">Создать тест</RouterLink>
-        <button class="ml-auto" @click="signOutWithRedirect">Выйти</button>
+        <RouterLink active-class="underline underline-offset-2 decoration-2" to="/user"
+          >Мои тесты</RouterLink
+        >
+        <RouterLink
+          class="rounded-md bg-sky-600 px-2 py-1 text-white transition-shadow hover:shadow-md"
+          to="/create"
+          >Создать тест</RouterLink
+        >
+        <button
+          class="ml-auto rounded-md bg-slate-700 px-2 py-1 text-white transition-shadow hover:shadow-md"
+          @click="signOutWithRedirect"
+        >
+          Выйти
+        </button>
       </template>
 
       <button class="ml-auto" v-else @click="signIn">Войти через Google</button>
     </header>
-
-    <RouterView />
+    <main class="p-4">
+      <RouterView />
+    </main>
     <ClientErrors />
   </template>
 </template>

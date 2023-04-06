@@ -10,12 +10,10 @@ const { quiz, loading, error } = useQuiz(id)
 </script>
 
 <template>
-  <main class="px-4 pb-4">
-    <div v-if="loading">Загрузка</div>
-    <div v-else-if="error">
-      <h2 class="font-bold">При загрузке данных возникла ошибка</h2>
-      <p>Попробуйте зайти позднее</p>
-    </div>
-    <CreateQuizForm v-else :quiz="quiz!" />
-  </main>
+  <div v-if="loading">Загрузка</div>
+  <div v-else-if="error">
+    <h2 class="font-bold">При загрузке данных возникла ошибка</h2>
+    <p>Попробуйте зайти позднее</p>
+  </div>
+  <CreateQuizForm v-else :quiz="quiz!" />
 </template>
