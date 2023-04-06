@@ -8,6 +8,7 @@ import { debounce } from 'debounce'
 import { doc, updateDoc } from 'firebase/firestore'
 import { ErrorMessage, Field, FieldArray, useForm } from 'vee-validate'
 import { nextTick, onUnmounted, ref } from 'vue'
+import { useDisplayErrors } from './useDisplayErrors'
 
 const props = defineProps<{ quiz: QuizDraft }>()
 
@@ -17,6 +18,8 @@ const { handleSubmit, values, errors } = useForm({
   validationSchema: QuizFormSchema,
   initialValues: props.quiz
 })
+
+const { displayedErrors, hideErrors, showErrors } = useDisplayErrors(errors)
 
 const onSubmit = handleSubmit(async (values) => {
   const castedValues = QuizFormSchema.cast(values)
@@ -31,15 +34,9 @@ const onSubmit = handleSubmit(async (values) => {
 
 function onInvalidSubmit() {
   nextTick(() => {
-    isShowErrors.value = true
+    showErrors()
     window.scroll({ top: 0, behavior: 'smooth' })
   })
-}
-
-const isShowErrors = ref(false)
-
-function hideErrors() {
-  isShowErrors.value = false
 }
 
 const debouncedUpdate = debounce(async () => {
@@ -96,10 +93,10 @@ const currentTab = ref<'main' | 'questions' | 'results'>('main')
         Результаты
       </button>
     </div>
-    <div v-if="isShowErrors && errors">
+    <div v-if="displayedErrors">
       <p>Исправьте ошибки, чтобы опубликовать свой тест</p>
       <ul class="mb-2 list-inside list-disc">
-        <li v-for="error in errors" :key="error">
+        <li v-for="error in displayedErrors" :key="error">
           {{ error }}
         </li>
       </ul>
@@ -205,7 +202,7 @@ const currentTab = ref<'main' | 'questions' | 'results'>('main')
                 </div>
                 <button
                   type="button"
-                  @click="() => addAnswer({})"
+                  @click="() => addAnswer({ score: null, text: '' })"
                   class="rounded-md border border-sky-800 bg-sky-50 px-2 py-1 text-sky-800 transition-colors hover:bg-sky-100"
                 >
                   Добавить ответ
@@ -223,7 +220,7 @@ const currentTab = ref<'main' | 'questions' | 'results'>('main')
         </div>
         <button
           type="button"
-          @click="() => addQuestion({})"
+          @click="() => addQuestion({ text: '', answers: [] })"
           class="self-start rounded-md border border-emerald-800 bg-emerald-50 p-2 text-emerald-800 transition-colors hover:bg-emerald-100"
         >
           Добавить вопрос
@@ -240,7 +237,7 @@ const currentTab = ref<'main' | 'questions' | 'results'>('main')
           <div
             v-for="(resultField, resultIndex) in resultFields"
             :key="resultField.key"
-            class="rounded-md border border-slate-300"
+            class="overflow-hidden rounded-md border border-slate-300"
           >
             <div class="flex gap-4">
               <div class="flex flex-1 gap-4 p-4">
@@ -291,7 +288,7 @@ const currentTab = ref<'main' | 'questions' | 'results'>('main')
         </div>
         <button
           type="button"
-          @click="() => addResult({})"
+          @click="() => addResult({ text: '', min: null, max: null })"
           class="rounded-md border border-emerald-800 bg-emerald-50 p-2 text-emerald-800 transition-colors hover:bg-emerald-100"
         >
           Добавить результат
