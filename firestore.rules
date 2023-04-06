@@ -1,9 +1,23 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if
-          request.time < timestamp.date(2023, 4, 26);
+    match /quizes/{quizID}{
+      function isQuizValid(quizData, uid) {
+        return quizData.keys().hasOnly(['title', 'description', 'id', 'results', 'questions', 'isPublished', 'owner']) &&
+        quizData.owner == uid
+      }
+
+      function couldReadDraft(quizData, uid) {
+        return quizData.isPublished == false &&
+        quizData.owner == uid
+      }
+
+      function couldReadPublishedQuiz(quizData) {
+        return quizData.isPublished == true
+      }
+
+      allow read: if couldReadDraft(resource.data, request.auth.uid) || couldReadPublishedQuiz(resource.data);
+      allow write: if isQuizValid(request.resource.data, request.auth.uid)
     }
   }
 }
