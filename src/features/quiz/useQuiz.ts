@@ -19,6 +19,6 @@ export function useQuiz(id: Ref<string>) {
       toFirestore: (data) => data
     })
   )
-  promise.value.then(() => (loading.value = false))
+  promise.value.then(() => (loading.value = false)).catch(() => (loading.value = false))
   return { data, error, loading }
 }

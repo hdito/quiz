@@ -23,6 +23,6 @@ export function usePublishedQuizes() {
       toFirestore: (data) => data
     })
   )
-  promise.value.then(() => (loading.value = false))
+  promise.value.then(() => (loading.value = false)).catch(() => (loading.value = false))
   return { data, error, loading }
 }

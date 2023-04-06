@@ -24,7 +24,7 @@ export function useDrafts() {
       toFirestore: (data) => data
     })
   )
-  promise.value.then(() => (loading.value = false))
+  promise.value.then(() => (loading.value = false)).catch(() => (loading.value = false))
 
   return { data, loading, error }
 }
