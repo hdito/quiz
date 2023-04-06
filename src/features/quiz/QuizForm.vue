@@ -45,7 +45,7 @@ function nextQuestion() {
 
 <template>
   <div class="m-auto max-w-md">
-    <h1 class="text-center font-bold">{{ quiz.title }}</h1>
+    <h1 class="break-words text-center font-bold">{{ quiz.title }}</h1>
     <template v-if="position === null">
       <p class="mb-4 text-center">
         {{ quiz.description }}

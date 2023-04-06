@@ -65,12 +65,12 @@ const hasErrors = ref(false)
       <div
         v-for="draft in drafts"
         :key="draft.id"
-        class="flex items-center gap-4 rounded-md border border-slate-300 p-4"
+        class="flex flex-col items-center gap-4 rounded-md border border-slate-300 p-2 sm:flex-row sm:p-4"
       >
-        <div class="min-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap">
+        <div class="min-w-0 max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap">
           {{ draft.title }}
         </div>
-        <div class="ml-auto flex gap-4">
+        <div class="flex gap-2 text-sm sm:ml-auto sm:gap-4">
           <button
             @click="() => publish(draft)"
             class="rounded-md border border-sky-500 bg-sky-50 px-2 py-1 text-sky-700 hover:shadow-md"
@@ -95,28 +95,28 @@ const hasErrors = ref(false)
     <h2 class="mb-2 text-xl font-bold">Опубликованные тесты</h2>
     <div class="flex flex-col gap-2" v-if="publishedQuizes.length !== 0">
       <div
-        class="flex items-center gap-4 rounded-md border border-slate-300 p-4 hover:shadow-md"
+        class="flex flex-col items-center gap-4 overflow-hidden rounded-md border border-slate-300 p-2 sm:flex-row sm:p-4"
         v-for="publishedQuiz in publishedQuizes"
         :key="publishedQuiz.id"
       >
-        <div>
+        <div class="min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
           {{ publishedQuiz.title }}
         </div>
-        <div class="ml-auto flex gap-4">
+        <div class="flex gap-2 text-sm sm:ml-auto sm:gap-4">
           <button
             @click="() => removeFromPublication(publishedQuiz.id)"
-            class="rounded-md border border-sky-500 bg-sky-50 px-2 py-1 text-sky-700 hover:shadow-md"
+            class="flex items-center rounded-md border border-sky-500 bg-sky-50 px-2 py-1 text-sky-700 hover:shadow-md"
           >
             Снять с публикации
           </button>
           <RouterLink
             :to="`/edit/${publishedQuiz.id}`"
-            class="rounded-md border border-emerald-500 bg-emerald-50 px-2 py-1 text-emerald-700 hover:shadow-md"
+            class="flex items-center rounded-md border border-emerald-500 bg-emerald-50 px-2 py-1 text-emerald-700 hover:shadow-md"
             >Редактировать</RouterLink
           >
           <button
             @click="() => deleteQuiz(publishedQuiz.id)"
-            class="rounded-md border border-rose-500 bg-rose-50 px-2 py-1 text-rose-700 hover:shadow-md"
+            class="flex items-center rounded-md border border-rose-500 bg-rose-50 px-2 py-1 text-rose-700 hover:shadow-md"
           >
             Удалить
           </button>

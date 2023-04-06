@@ -25,7 +25,9 @@ async function signOutWithRedirect() {
 
 <template>
   <template v-if="isCurrentUserLoaded">
-    <header class="sticky top-0 flex items-center gap-6 bg-white/50 p-4 shadow-md shadow-slate-200">
+    <header
+      class="sticky top-0 flex items-center gap-6 bg-white/50 p-4 text-center shadow-md shadow-slate-200"
+    >
       <RouterLink active-class="underline underline-offset-2 decoration-2" to="/">Тесты</RouterLink>
 
       <template v-if="user && user.uid">

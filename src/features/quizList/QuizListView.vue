@@ -15,7 +15,7 @@ const { data: quizes, loading, error } = useQuizList()
       v-else
       v-for="quiz in quizes"
       :key="quiz.title"
-      class="rounded-md border border-slate-300 p-4 hover:shadow-md"
+      class="overflow-hidden text-ellipsis whitespace-nowrap rounded-md border border-slate-300 p-4 hover:shadow-md"
       :to="`/quiz/${quiz.id}`"
     >
       {{ quiz.title }}

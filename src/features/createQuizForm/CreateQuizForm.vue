@@ -163,9 +163,9 @@ const currentTab = ref<'main' | 'questions' | 'results'>('main')
                   <div
                     v-for="(answerField, answerIndex) in answerFields"
                     :key="answerField.key"
-                    class="flex overflow-hidden rounded-md border border-slate-300"
+                    class="flex flex-col overflow-hidden rounded-md border border-slate-300 sm:flex-row"
                   >
-                    <div class="flex flex-1 gap-4 p-4">
+                    <div class="flex flex-1 flex-col gap-4 p-4 sm:flex-row">
                       <div class="flex flex-1 flex-col">
                         <label :for="`input-text-${answerIndex}`" class="font-bold">Ответ</label>
                         <Field
@@ -194,7 +194,7 @@ const currentTab = ref<'main' | 'questions' | 'results'>('main')
                     <button
                       type="button"
                       @click="() => removeAnswer(answerIndex)"
-                      class="border-l border-l-slate-300 bg-rose-50 p-2 text-rose-800 transition-colors hover:bg-rose-100"
+                      class="border-t border-t-slate-300 bg-rose-50 p-2 text-rose-800 transition-colors hover:bg-rose-100 sm:border-l sm:border-t-0 sm:border-l-slate-300"
                     >
                       Удалить ответ
                     </button>
@@ -239,8 +239,8 @@ const currentTab = ref<'main' | 'questions' | 'results'>('main')
             :key="resultField.key"
             class="overflow-hidden rounded-md border border-slate-300"
           >
-            <div class="flex gap-4">
-              <div class="flex flex-1 gap-4 p-4">
+            <div class="flex flex-col sm:flex-row">
+              <div class="flex flex-1 flex-col gap-4 p-4 xl:flex-row">
                 <div class="flex flex-col">
                   <label :for="`input-min-${resultIndex}`" class="font-bold"
                     >Минимальный балл</label
@@ -279,7 +279,7 @@ const currentTab = ref<'main' | 'questions' | 'results'>('main')
               <button
                 type="button"
                 @click="() => removeResult(resultIndex)"
-                class="border-l border-l-slate-300 bg-rose-50 p-4 text-rose-800 hover:bg-rose-100"
+                class="border-t border-t-slate-300 bg-rose-50 p-4 text-rose-800 hover:bg-rose-100 sm:border-t-0 sm:border-l sm:border-l-slate-300"
               >
                 Удалить результат
               </button>
