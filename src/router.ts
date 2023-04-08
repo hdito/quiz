@@ -1,13 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import QuizListView from './features/quizList/QuizListView.vue'
-import QuizView from './features/quiz/QuizView.vue'
-import CreateQuizFormView from './features/createQuizForm/CreateQuizFormView.vue'
 import { doc, setDoc } from 'firebase/firestore'
 import { nanoid } from 'nanoid'
-import { getCurrentUser } from './features/createQuizForm/getCurrentUser'
-import { db } from './firebase'
-import MyQuizesView from './features/myQuizes/MyQuizesView.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 import { useCurrentUser } from 'vuefire'
+import { getCurrentUser } from './features/createQuizForm/getCurrentUser'
+import QuizListView from './features/quizList/QuizListView.vue'
+import { db } from './firebase'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -15,7 +12,7 @@ const router = createRouter({
     { path: '/', component: QuizListView, meta: { requiresAuth: false } },
     {
       path: '/create',
-      component: CreateQuizFormView,
+      component: () => import('./features/createQuizForm/CreateQuizFormView.vue'),
       beforeEnter: async () => {
         const id = nanoid()
         const user = useCurrentUser()
@@ -36,12 +33,21 @@ const router = createRouter({
     },
     {
       path: '/edit/:id',
-      component: CreateQuizFormView,
+      component: () => import('./features/createQuizForm/CreateQuizFormView.vue'),
       props: true,
       meta: { requiresAuth: true }
     },
-    { path: '/quiz/:id', component: QuizView, props: true, meta: { requiresAuth: false } },
-    { path: '/user', component: MyQuizesView, meta: { requiresAuth: true } }
+    {
+      path: '/quiz/:id',
+      component: () => import('./features/quiz/QuizView.vue'),
+      props: true,
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/user',
+      component: () => import('./features/myQuizes/MyQuizesView.vue'),
+      meta: { requiresAuth: true }
+    }
   ]
 })
 
